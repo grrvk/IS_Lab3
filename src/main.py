@@ -10,26 +10,37 @@ TIME_SLOTS = [(day, period) for day in DAYS for period in PERIODS]
 auditoriums = read_auditoriums()
 groups = read_groups()
 teachers = read_teachers()
-subjects = read_subjects()
+subjects = read_subjects(groups)
 
-print(subjects[0])
+# print(groups)
+# print(auditoriums)
+# print(teachers)
+# print(subjects)
 
 
-def generatePopulation():
+def generateRandomSchedule():
     schedule = Schedule(TIME_SLOTS)
     for subject in subjects:
         for _ in range(subject.lectures_number):
-            group = next((g for g in groups if g.group_name == subject.group_name), None)
             lesson = Lesson(subject=subject,
                             subject_type='Лекція',
-                            group=group)
+                            group=subject.group)
             randomAssignment(lesson=lesson, schedule=schedule)
-        for _ in range(subject.practice_number):
-            group = next((g for g in groups if g.group_name == subject.group_name), None)
-            lesson = Lesson(subject=subject,
-                            subject_type='Практика',
-                            group=group)
-            randomAssignment(lesson=lesson, schedule=schedule)
+        if subject.requires_subgroups:
+            for subgroup in subject.group.subgroups:
+                for _ in range(subject.practice_number // len(subject.group.subgroups)):
+                    lesson = Lesson(subject=subject,
+                                    subject_type='Практика',
+                                    group=subject.group,
+                                    subgroup=subgroup)
+                    randomAssignment(lesson=lesson, schedule=schedule)
+        else:
+            for _ in range(subject.practice_number):
+                lesson = Lesson(subject=subject,
+                                subject_type='Практика',
+                                group=subject.group)
+                randomAssignment(lesson=lesson, schedule=schedule)
+    return schedule
 
 
 def randomAssignment(lesson: Lesson, schedule):
@@ -45,7 +56,17 @@ def randomAssignment(lesson: Lesson, schedule):
 
     schedule.timetable[time_slot].append(lesson)
 
-# print(groups)
-# print(teachers)
-# print(subjects)
-# print(auditoriums)
+
+POPULATION_SIZE = 1
+GENERATIONS = 50
+
+
+def generatePopulation():
+    population = []
+    for _ in range(POPULATION_SIZE):
+        schedule = generateRandomSchedule()
+        population.append(schedule)
+    return population
+
+
+generatePopulation()

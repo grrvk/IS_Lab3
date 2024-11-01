@@ -44,18 +44,16 @@ class Subject(Base):
 
     subject_id = Column("subject_id", Integer, primary_key=True, autoincrement=True)
     subject_name = Column("subject_name", String)
-    group_id = Column("group_id", Integer, ForeignKey('group.group_id'), nullable=False)
+    group_name = Column("group_name", String, ForeignKey('group.group_name'), nullable=False)
     lectures_number = Column("lectures_number", Integer)
     practice_number = Column("practice_number", Integer)
     requires_subgroups = Column("requires_subgroups", Boolean)
     week = Column("week", String)
 
-    teacher_assigned = Column("teacher_assigned", Boolean)
-
-    def __init__(self, subject_name, group_id, lectures_number, practice_number,
+    def __init__(self, subject_name, group_name, lectures_number, practice_number,
                  requires_subgroups, week, teacher_assigned=False):
         self.subject_name = subject_name
-        self.group_id = group_id
+        self.group_name = group_name
         self.lectures_number = lectures_number
         self.practice_number = practice_number
         self.requires_subgroups = bool(requires_subgroups)

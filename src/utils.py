@@ -31,10 +31,10 @@ def read_teachers(df=df_teachers, extra_df=df_teacher_subject):
     return teachers
 
 
-def read_subjects(df=df_subjects, extra_df=df_groups):
+def read_subjects(groups_list, df=df_subjects):
     subjects = []
     for index, row in df.iterrows():
-        group = extra_df[extra_df['group_id'] == row['group_id']]['group_name'].values[0]
+        group = next((g for g in groups_list if g.group_name == row['group_name']), None)
         subjects.append(Subject(subject_name=row['subject_name'],
                                 group=group,
                                 lectures_number=row['lectures_number'],

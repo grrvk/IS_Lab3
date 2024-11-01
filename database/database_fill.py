@@ -65,7 +65,7 @@ full_pairs = initial_pairs + additional_pairs
 for pair in full_pairs:
     stmt = select(Group).where(Group.group_name == pair[1])
     group = session.scalars(stmt).one()
-    sbj = Subject(subject_name=pair[0], group_id=group.group_id,
+    sbj = Subject(subject_name=pair[0], group_name=group.group_name,
                   lectures_number=random.choice(lectures_number),
                   practice_number=random.choice(practice_number),
                   requires_subgroups=random.choice([True, False]),
@@ -97,7 +97,7 @@ for subject_name in subject_names:
     teacher_subject = TeacherSubject(teacher_name=random_teacher.name,
                                      subject_name=subject_name)
     session.add(teacher_subject)
-    if random_teacher.subject_type in ['Лектор', 'Практик']:
+    if random_teacher.subject_type in ['Лекція', 'Практика']:
         filtered_types = [t for t in teacher_subject_types if t != random_teacher.subject_type]
         filtered_teachers = [t for t in teachers_queried if t.subject_type
                              in filtered_types]
