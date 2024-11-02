@@ -1,5 +1,10 @@
+import os
+import pandas as pd
+
 from scheme import Group, Teacher, Auditorium, Subject
 from database.database_query import df_groups, df_teachers, df_subjects, df_auditorium, df_teacher_subject
+
+DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 
 def read_groups(df=df_groups):
@@ -45,12 +50,26 @@ def read_subjects(groups_list, df=df_subjects):
     return subjects
 
 
-# groups = read_groups()
-# auditoriums = read_auditoriums()
-# teachers = read_teachers()
-# subjects = read_subjects()
-#
-# #print(groups)
-# #print(auditoriums)
-# print(teachers)
-# #print(subjects)
+corresponding_time = ['8:40-10:15', '10:35-12:10', '12:20-13:55']
+
+
+def exportSchedule(schedule, dir='schedules'):
+    os.makedirs(dir, exist_ok=True)
+    week_types = ['Парний', 'Непарний']
+
+    for week in week_types:
+        csv_file_path = f'{dir}/{week}.csv'
+        df = pd.DataFrame(columns=['Day', 'Subject', 'Teacher', 'Group', 'Auditorium', 'Time'])
+
+        for time_slot in schedule.timetable:
+            lessons = schedule.timetable[time_slot]
+            for lesson in lessons:
+                if lesson.subject.week == week or lesson.subject.week == 'Обидва':
+                    df.loc[len(df.index)] = [time_slot[0], lesson.subject.subject_name, lesson.teacher.name,
+                                             lesson.group.group_name, lesson.auditorium.auditorium_name,
+                                             corresponding_time[int(time_slot[1])-1]]
+        df.to_csv(csv_file_path, index=False)
+
+
+
+

@@ -1,23 +1,9 @@
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Boolean, Table
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, Mapped, mapped_column
-from typing import List, Optional
+from sqlalchemy.orm import sessionmaker
 
-import random
-
-import os
-from dotenv import load_dotenv
-load_dotenv()
 
 Base = declarative_base()
-
-
-# association_table = Table(
-#     "teacher_subject",
-#     Base.metadata,
-#     Column("teacher_name", String, ForeignKey("teacher.name")),
-#     Column("subject_name", String, ForeignKey("subject.subject_name"))
-# )
 
 
 class Group(Base):
@@ -73,8 +59,6 @@ class Teacher(Base):
     name = Column("name", String)
     subject_type = Column("subject_type", String)
     maxHoursPerWeek = Column("maxHoursPerWeek", Integer)
-
-    #subjects_taught: Mapped[List[Subject]] = relationship(secondary=association_table)
 
     def __init__(self, name, subject_type, maxHoursPerWeek):
         self.name = name
